@@ -3390,3 +3390,7 @@ div.oe_chatter{
 .openerp .oe_topbar_item.oe_topbar_compose_full_email button{
   display: none; 
 }
+
+.openerp .announcement_bar{
+  display: none;
+}
