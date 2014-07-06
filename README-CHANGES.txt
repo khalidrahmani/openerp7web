@@ -34,17 +34,16 @@ yahya@yahya:~$ sudo vim /etc/init.d/dropbox  # replace user yahya with nurwagen
 sudo chmod +x /etc/init.d/dropbox
 sudo update-rc.d dropbox defaults
 
-yahya@yahya:~/Dropbox/PSQLBackup$ pg_dump -Fc nurwagen > backup
+yahya@yahya:~/Dropbox/PSQLBackup$ pg_dump -U openerp -Fc nurwagen > backup
 
 yahya@yahya:~/Dropbox/PSQLBackup$ sudo su - postgres
-
 postgres@yahya:~$ psql
 
-DROP DATABASE nurwagen;
+DROP DATABASE nurwagen_restore;
 
-CREATE DATABASE nurwagen WITH OWNER = openerp ENCODING = 'UTF8' TABLESPACE = pg_default LC_COLLATE = 'en_US.UTF-8' LC_CTYPE = 'en_US.UTF-8' CONNECTION LIMIT = -1;
+CREATE DATABASE nurwagen_restore WITH OWNER = openerp ENCODING = 'UTF8' TABLESPACE = pg_default LC_COLLATE = 'en_US.UTF-8' LC_CTYPE = 'en_US.UTF-8' CONNECTION LIMIT = -1;
 
-yahya@yahya:~/Dropbox/PSQLBackup$ pg_restore -d nurwagen backup
+yahya@yahya:~/Dropbox/PSQLBackup$ pg_restore -n public -U openerp -d nurwagen_restore backup.dump
 
 #### Dropbox Database Backup 
 
@@ -53,3 +52,13 @@ need ~/.pgpass file with
 	127.0.0.1:5432:*:yahya:yahya
 #### Dropbox Database Backup 
 
+######
+
+tar    :::: tar -zcvf app.tar.gz app/
+
+scp -i shared.pem ubuntu@ec2-54-89-109-42.compute-1.amazonaws.com:~/herokudb/redpoint-crawler/app.tar.gz ./
+
+untar  :::: tar -zxvf app.tar.gz
+
+## Copy to EC2
+scp -i my_key.pem -r ~/Desktop/Aptana_Rails/workspace/openerp7/mrp_repair/ ubuntu@ec2-54-215-166-82.us-west-1.compute.amazonaws.com:/opt/openerp/server/openerp/addons
